@@ -154,7 +154,7 @@
           "email": {
             "type": "string"
           },
-          "Password": {
+          "password": {
             "type": "string"
           }
         }
@@ -191,7 +191,7 @@
           "email": {
             "type": "string"
           },
-          "Password": {
+          "password": {
             "type": "string"
           }
         }
