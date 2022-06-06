@@ -15,7 +15,7 @@ const registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10)
   db.get(getUserQuery, [email], (err, result) => {
     if (err) {
-      return res.status(400).json({message: err})
+      return res.status(500).json({message: err})
     }
 
     if(result) {
@@ -24,7 +24,7 @@ const registerUser = async (req, res) => {
 
     db.run(insertQuery, [firstname, lastname, email, hashedPassword], (err) => {
       if (err) {
-        return res.status(400).json({message: err})
+        return res.status(500).json({message: err})
       }
       return res.status(201).json({
         message: 'user created',
@@ -56,7 +56,7 @@ const updateProfile = async (req, res) => {
     return res.status(401).json({message: 'Unauthorized'})
   }
 
-  const updateQuery = 'update user set firstname = $1, lastname = $2, email = $3 where user_id = $4';
+  const updateQuery = 'update user set firstname = $1, lastname = $2, email = $3 where user_id = $4'
   db.run(updateQuery, [
     req.body.firstname || req.user.firstname,
     req.body.lastname || req.user.lastname,
@@ -65,10 +65,19 @@ const updateProfile = async (req, res) => {
   ],
   (err) => {
     if(err) {
-      return res.status(400).json({message: err})
+      return res.status(500).json({message: err})
     }
     return res.status(204).json({message: 'profile updated' })
   })
 }
 
-module.exports = { registerUser, login, updateProfile }
+const logout = async (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      res.status(500).json({message: 'something went wrong'})
+    }
+  })
+  res.status(200).json({message: 'Successfully logged out'})
+}
+
+module.exports = { registerUser, login, updateProfile, logout }
