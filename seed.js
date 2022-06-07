@@ -4,7 +4,7 @@ const sql_create = `CREATE TABLE IF NOT EXISTS user (
   user_id INTEGER PRIMARY KEY AUTOINCREMENT,
   firstname VARCHAR(100) NOT NULL,
   lastname VARCHAR(100) NOT NULL,
-  email VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
   password TEXT
 );`
 

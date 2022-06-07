@@ -10,6 +10,10 @@ const registerUser = async (req, res) => {
     password
   } = req.body
 
+  if(!firstname || !lastname || !email || !password) {
+    return res.status(400).json({message: 'Some fields are missing'})
+  }
+
   const insertQuery = 'insert into user (firstname, lastname, email, password ) values(?, ?, ?, ?)'
   const getUserQuery = 'select * from user where email = ?'
   const hashedPassword = await bcrypt.hash(password, 10)
