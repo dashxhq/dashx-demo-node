@@ -39,8 +39,8 @@ module.exports = function (passport) {
   )
 
   passport.use(new JwtStrategy(opts, function(jwtPayload, done) {
-    const getUserQuery = 'select * from user where email = $1 and user_id = $2'
-    db.get(getUserQuery, [jwtPayload.email, jwtPayload.id], (err, user) => {
+    const getUserQuery = 'select * from user where user_id = $2'
+    db.get(getUserQuery, [ jwtPayload.id], (err, user) => {
       if (err) {
        throw err
       }
