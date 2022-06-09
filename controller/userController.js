@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+const dx = require('../lib/dashx')
 const db = require('../database/database')
 
 const registerUser = async (req, res) => {
@@ -47,7 +48,20 @@ const registerUser = async (req, res) => {
 
 const login = async (req, res) => {
   const {firstname, lastname, email, user_id} = req.user
-  const token = jwt.sign(JSON.parse(JSON.stringify({ firstname, lastname, email, id: user_id })), 'nodeauthsecret', {expiresIn: 86400 * 30})
+  const token = jwt.sign(
+    JSON.parse(JSON.stringify({
+      firstname,
+      lastname,
+      email,
+      id: user_id
+    })),
+    'nodeauthsecret',
+    {
+      expiresIn: 86400 * 30
+    }
+  )
+
+  dx.identify(user_id)
   res.status(200).json({
     message: 'user logged in',
     data: {
@@ -76,6 +90,13 @@ const updateProfile = async (req, res) => {
     if(err) {
       return res.status(500).json({message: err})
     }
+    
+    dx.identify(req.user.user_id, {
+      firstname: req.body.firstname || req.user.firstname,
+      lastname: req.body.lastname || req.user.lastname,
+      email: req.body.email || req.user.email,
+    })
+
     return res.status(204).json({message: 'profile updated' })
   })
 }
