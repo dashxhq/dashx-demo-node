@@ -92,8 +92,8 @@ const updateProfile = async (req, res) => {
     }
     
     dx.identify(req.user.user_id, {
-      firstname: req.body.firstname || req.user.firstname,
-      lastname: req.body.lastname || req.user.lastname,
+      firstName: req.body.firstname || req.user.firstname,
+      lastName: req.body.lastname || req.user.lastname,
       email: req.body.email || req.user.email,
     })
 
