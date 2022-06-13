@@ -8,7 +8,7 @@ const sql_create = `CREATE TABLE IF NOT EXISTS user (
   password TEXT
 );`
 
-db.run(sql_create, err => {
+db.run(sql_create, (err) => {
   if (err) {
     return console.error(err.message)
   }
