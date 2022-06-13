@@ -40,7 +40,7 @@ const registerUser = async (req, res) => {
           firstname,
           lastname,
           email
-        } 
+        }
       })
     })
   })
@@ -90,7 +90,7 @@ const updateProfile = async (req, res) => {
     if(err) {
       return res.status(500).json({message: err})
     }
-    
+
     dx.identify(req.user.user_id, {
       firstName: req.body.firstname || req.user.firstname,
       lastName: req.body.lastname || req.user.lastname,

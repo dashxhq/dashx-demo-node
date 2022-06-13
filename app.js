@@ -17,7 +17,7 @@ require("./middleware/passportConfig")(passport)
 app.use('/', indexRoutes)
 app.use(
   '/',
-  swaggerUi.serve, 
+  swaggerUi.serve,
   swaggerUi.setup(swaggerDocument)
 )
 

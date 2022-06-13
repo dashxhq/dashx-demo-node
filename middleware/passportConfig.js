@@ -21,7 +21,7 @@ module.exports = function (passport) {
         if (err) {
          throw err
         }
-        
+
         if (!user) {
           return done(null, false)
         }
@@ -44,7 +44,7 @@ module.exports = function (passport) {
       if (err) {
        throw err
       }
-      
+
       if (!user) {
         return done(null, false)
       }
