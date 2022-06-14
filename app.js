@@ -17,6 +17,6 @@ require('./src/middlewares/passport.middleware')(passport)
 app.use('/', userRoutes)
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
-app.listen(process.env.APP_PORT, () => {
-  console.log(`Server listening on port ${process.env.APP_PORT}`)
+app.listen(process.env.PORT, () => {
+  console.log(`Server listening on port ${process.env.PORT}`)
 })
