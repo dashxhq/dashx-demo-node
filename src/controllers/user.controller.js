@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const dx = require('../lib/dashx')
-const db = require('../database/database')
+const dx = require('../configs/dashx.config')
+const db = require('../configs/db.config')
 
 const registerUser = async (req, res) => {
   const { firstname, lastname, email, password } = req.body
@@ -12,8 +12,8 @@ const registerUser = async (req, res) => {
   }
 
   const insertQuery =
-    'insert into user (firstname, lastname, email, password ) values(?, ?, ?, ?)'
-  const getUserQuery = 'select * from user where email = ?'
+    'insert into users (first_name, last_name, email, password ) values(?, ?, ?, ?)'
+  const getUserQuery = 'select * from users where email = ?'
   const hashedPassword = await bcrypt.hash(password, 10)
   db.get(getUserQuery, [email], (err, result) => {
     if (err) {
@@ -47,14 +47,14 @@ const registerUser = async (req, res) => {
 }
 
 const login = async (req, res) => {
-  const { firstname, lastname, email, user_id } = req.user
+  const { first_name, last_name, email, id } = req.user
   const token = jwt.sign(
     JSON.parse(
       JSON.stringify({
-        firstname,
-        lastname,
+        first_name,
+        last_name,
         email,
-        id: user_id,
+        id: id,
       })
     ),
     'nodeauthsecret',
@@ -63,13 +63,13 @@ const login = async (req, res) => {
     }
   )
 
-  dx.identify(user_id)
+  dx.identify(id)
   res.status(200).json({
     message: 'user logged in',
     data: {
-      userid: user_id,
-      firstname,
-      lastname,
+      userid: id,
+      first_name,
+      last_name,
       email,
       token,
     },
@@ -82,23 +82,23 @@ const updateProfile = async (req, res) => {
   }
 
   const updateQuery =
-    'update user set firstname = $1, lastname = $2, email = $3 where user_id = $4'
+    'update users set first_name = $1, last_name = $2, email = $3 where id = $4'
   db.run(
     updateQuery,
     [
-      req.body.firstname || req.user.firstname,
-      req.body.lastname || req.user.lastname,
+      req.body.firstname || req.user.first_name,
+      req.body.lastname || req.user.last_name,
       req.body.email || req.user.email,
-      req.user.user_id,
+      req.user.id,
     ],
     (err) => {
       if (err) {
         return res.status(500).json({ message: err })
       }
 
-      dx.identify(req.user.user_id, {
-        firstName: req.body.firstname || req.user.firstname,
-        lastName: req.body.lastname || req.user.lastname,
+      dx.identify(req.user.id, {
+        firstName: req.body.firstname || req.user.first_name,
+        lastName: req.body.lastname || req.user.last_name,
         email: req.body.email || req.user.email,
       })
 

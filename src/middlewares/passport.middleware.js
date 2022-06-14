@@ -3,10 +3,10 @@ const localStrategy = require('passport-local').Strategy
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 
-const db = require('../database/database')
+const db = require('../configs/db.config')
 
 module.exports = function (passport) {
-  const getUserQuery = 'select * from user where email = $1'
+  const getUserQuery = 'select * from users where email = $1'
   const opts = {}
   opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
   opts.secretOrKey = 'nodeauthsecret'
@@ -44,7 +44,7 @@ module.exports = function (passport) {
 
   passport.use(
     new JwtStrategy(opts, function (jwtPayload, done) {
-      const getUserQuery = 'select * from user where user_id = $2'
+      const getUserQuery = 'select * from users where id = $2'
       db.get(getUserQuery, [jwtPayload.id], (err, user) => {
         if (err) {
           throw err

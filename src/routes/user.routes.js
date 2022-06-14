@@ -6,8 +6,7 @@ const {
   registerUser,
   login,
   updateProfile,
-  logout,
-} = require('../controller/userController')
+} = require('../controllers/user.controller')
 
 router.put('/register', registerUser)
 router.post('/login', passport.authenticate('local', { session: false }), login)
