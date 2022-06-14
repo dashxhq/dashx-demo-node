@@ -2,48 +2,44 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const dx = require('../configs/dashx.config')
-const db = require('../configs/db.config')
+const executeQuery = require('../configs/db.config')
 
 const registerUser = async (req, res) => {
-  const { firstname, lastname, email, password } = req.body
+  const { first_name, last_name, email, password } = req.body
 
-  if (!firstname || !lastname || !email || !password) {
+  if (!first_name || !last_name || !email || !password) {
     return res.status(400).json({ message: 'All fields are required' })
   }
 
   const insertQuery =
-    'insert into users (first_name, last_name, email, password ) values(?, ?, ?, ?)'
-  const getUserQuery = 'select * from users where email = ?'
+    'insert into users (first_name, last_name, email, password ) values($1, $2, $3, $4) returning *'
+  const getUserQuery = 'select * from users where email = $1'
   const hashedPassword = await bcrypt.hash(password, 10)
-  db.get(getUserQuery, [email], (err, result) => {
-    if (err) {
-      return res.status(500).json({ message: err })
-    }
-
-    if (result) {
+  try {
+    const existingUser = await executeQuery(getUserQuery, [email])
+    if (existingUser.rowCount) {
       return res.status(409).json({ message: 'User already exists' })
     }
 
-    db.run(
-      insertQuery,
-      [firstname, lastname, email, hashedPassword],
-      function (err) {
-        if (err) {
-          return res.status(500).json({ message: err })
-        }
+    const user = await executeQuery(insertQuery, [
+      first_name,
+      last_name,
+      email,
+      hashedPassword,
+    ])
 
-        return res.status(201).json({
-          message: 'user created',
-          data: {
-            id: this.lastID,
-            firstname,
-            lastname,
-            email,
-          },
-        })
-      }
-    )
-  })
+    return res.status(201).json({
+      message: 'user created',
+      data: {
+        id: user.rows[0].id,
+        first_name,
+        last_name,
+        email,
+      },
+    })
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
 }
 
 const login = async (req, res) => {
@@ -67,7 +63,7 @@ const login = async (req, res) => {
   res.status(200).json({
     message: 'user logged in',
     data: {
-      userid: id,
+      id: id,
       first_name,
       last_name,
       email,
@@ -82,29 +78,25 @@ const updateProfile = async (req, res) => {
   }
 
   const updateQuery =
-    'update users set first_name = $1, last_name = $2, email = $3 where id = $4'
-  db.run(
-    updateQuery,
-    [
-      req.body.firstname || req.user.first_name,
-      req.body.lastname || req.user.last_name,
+    'update users set first_name = $1, last_name = $2, email = $3 where id = $4 returning *'
+  try {
+    const user = await executeQuery(updateQuery, [
+      req.body.first_name || req.user.first_name,
+      req.body.last_name || req.user.last_name,
       req.body.email || req.user.email,
       req.user.id,
-    ],
-    (err) => {
-      if (err) {
-        return res.status(500).json({ message: err })
-      }
+    ])
 
-      dx.identify(req.user.id, {
-        firstName: req.body.firstname || req.user.first_name,
-        lastName: req.body.lastname || req.user.last_name,
-        email: req.body.email || req.user.email,
-      })
+    dx.identify(user.rows[0].id, {
+      first_name: user.rows[0].first_name,
+      last_name: user.rows[0].last_name,
+      email: user.rows[0].email,
+    })
 
-      return res.status(204).json({ message: 'profile updated' })
-    }
-  )
+    return res.status(204).json({ message: 'profile updated' })
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
 }
 
 // const logout = async (req, res) => {

@@ -3,7 +3,7 @@ const localStrategy = require('passport-local').Strategy
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 
-const db = require('../configs/db.config')
+const executeQuery = require('../configs/db.config')
 
 module.exports = function (passport) {
   const getUserQuery = 'select * from users where email = $1'
@@ -17,45 +17,45 @@ module.exports = function (passport) {
         usernameField: 'email',
         passwordField: 'password',
       },
-      (email, password, done) => {
-        db.get(getUserQuery, [email], (err, user) => {
-          if (err) {
-            throw err
-          }
-
-          if (!user) {
+      async (email, password, done) => {
+        try {
+          const user = await executeQuery(getUserQuery, [email])
+          if (!user.rowCount) {
             return done(null, false)
           }
 
-          bcrypt.compare(password, user.password, (err, result) => {
+          bcrypt.compare(password, user.rows[0].password, (err, result) => {
             if (err) done(err)
             if (result === true) {
-              return done(null, user)
+              return done(null, user.rows[0])
             } else {
               return done(null, false, {
                 message: 'Incorrect username or password.',
               })
             }
           })
-        })
+        } catch (error) {
+          return done(null, false, {
+            message: 'Incorrect username or password.',
+          })
+        }
       }
     )
   )
 
   passport.use(
-    new JwtStrategy(opts, function (jwtPayload, done) {
-      const getUserQuery = 'select * from users where id = $2'
-      db.get(getUserQuery, [jwtPayload.id], (err, user) => {
-        if (err) {
-          throw err
-        }
-
-        if (!user) {
+    new JwtStrategy(opts, async function (jwtPayload, done) {
+      const getUserQuery = 'select * from users where id = $1'
+      try {
+        const user = await executeQuery(getUserQuery, [jwtPayload.id])
+        if (!user.rowCount) {
           return done(null, false)
         }
 
-        return done(null, user)
-      })
+        return done(null, user.rows[0])
+      } catch (error) {
+        throw error
+      }
     })
   )
 }

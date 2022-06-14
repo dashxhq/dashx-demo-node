@@ -1,12 +1,28 @@
-const path = require('path')
-const sqlite3 = require('sqlite3').verbose()
+const { Pool } = require('pg')
+const dotEnv = require('dotenv')
 
-const dbName = path.join(__dirname, 'demo.db')
-const db = new sqlite3.Database(dbName, (err) => {
-  if (err) {
-    return console.error(err.message)
-  }
-  console.log('Successful connection to the database')
+dotEnv.config({ path: '../../.env' })
+
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 })
 
-module.exports = db
+/**
+ *  Execute postgresql query
+ * @param  query
+ * @param  values
+ */
+
+async function executeQuery(query, values) {
+  try {
+    return await pool.query(query, values)
+  } catch (e) {
+    console.log(e.stack)
+  }
+}
+
+module.exports = executeQuery

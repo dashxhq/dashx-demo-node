@@ -11,7 +11,7 @@ const {
 router.put('/register', registerUser)
 router.post('/login', passport.authenticate('local', { session: false }), login)
 router.patch(
-  '/update',
+  '/update-profile',
   passport.authenticate('jwt', { session: false }),
   updateProfile
 )
