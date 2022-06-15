@@ -28,6 +28,14 @@ const registerUser = async (req, res) => {
       hashedPassword,
     ])
 
+    const userData = {
+      first_name: user.rows[0].first_name,
+      last_name: user.rows[0].last_name,
+      email: user.rows[0].email,
+    }
+
+    await dx.identify(user.rows[0].id, userData)
+    await dx.track('User Registered', String(user.rows[0].id), userData)
     return res.status(201).json({
       message: 'user created',
       data: {
@@ -44,13 +52,18 @@ const registerUser = async (req, res) => {
 
 const login = async (req, res) => {
   const { first_name, last_name, email, id } = req.user
+  const dashxToken = dx.generateIdentityToken(id)
   const token = jwt.sign(
     JSON.parse(
       JSON.stringify({
         first_name,
         last_name,
         email,
-        id: id,
+        id,
+        session: {
+          id,
+          dashxToken,
+        },
       })
     ),
     'nodeauthsecret',
@@ -59,7 +72,6 @@ const login = async (req, res) => {
     }
   )
 
-  dx.identify(id)
   res.status(200).json({
     message: 'user logged in',
     data: {
