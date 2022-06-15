@@ -110,7 +110,15 @@ const updateProfile = async (req, res) => {
       email: user.rows[0].email,
     })
 
-    return res.status(204).json({ message: 'profile updated' })
+    return res.status(200).json({
+      message: 'profile updated',
+      data: {
+        id: user.rows[0].id,
+        first_name: user.rows[0].first_name,
+        last_name: user.rows[0].last_name,
+        email: user.rows[0].email,
+      },
+    })
   } catch (error) {
     return res.status(500).json({ message: error })
   }
