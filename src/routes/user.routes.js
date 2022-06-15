@@ -41,10 +41,6 @@ const registerUser = async (req, res) => {
     await dx.track('User Registered', String(user.rows[0].id), userData)
     return res.status(201).json({
       message: 'user created',
-      data: {
-        id: user.rows[0].id,
-        ...userData,
-      },
     })
   } catch (error) {
     return res.status(500).json({ message: error })
