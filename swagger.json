@@ -1,267 +1,257 @@
 {
-  "openapi": "3.0.0",
-  "info": {
-    "title": "DashX Demo",
-    "version": "1.0.0"
+  "openapi" : "3.0.0",
+  "info" : {
+    "version" : "1.0.0",
+    "title" : "DashX Demo"
   },
-  "servers": [
-    {
-      "url": "https://node.dashxdemo.com/",
-      "description": "DashX demo app backend"
-    }
-  ],
-  "paths": {
-    "/register": {
-      "put": {
-        "summary": "Register user data",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/register_body"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Successfully created response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/inline_response_201"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "User already exist",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/inline_response_409"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "internal server error"
-          }
-        }
-      }
-    },
-    "/login": {
-      "post": {
-        "summary": "Login user and returns user info",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/login_body"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/inline_response_200"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/inline_response_401"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "internal server error"
-          }
-        }
-      }
-    },
-    "/update-profile": {
-      "patch": {
-        "summary": "Update user profile",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/updateprofile_body"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "204": {
-            "description": "Successfully updated"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
+  "components" : {
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
       }
     }
   },
-  "components": {
-    "schemas": {
-      "register_body": {
-        "required": [
-          "email",
-          "first_name",
-          "last_name",
-          "password"
-        ],
-        "type": "object",
-        "properties": {
-          "first_name": {
-            "type": "string",
-            "example": "John"
-          },
-          "last_name": {
-            "type": "string",
-            "example": "J"
-          },
-          "email": {
-            "type": "string",
-            "example": "John@gmail.com"
-          },
-          "password": {
-            "type": "string",
-            "example": "qwerty"
-          }
-        }
-      },
-      "login_body": {
-        "required": [
-          "email",
-          "password"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "John@gmail.com"
-          },
-          "password": {
-            "type": "string",
-            "example": "qwerty"
-          }
-        }
-      },
-      "inline_response_409": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "example": "Email already exist"
-          }
-        }
-      },
-      "updateprofile_body": {
-        "required": [
-          "email",
-          "first_name",
-          "last_name"
-        ],
-        "type": "object",
-        "properties": {
-          "first_name": {
-            "type": "string",
-            "example": "John"
-          },
-          "last_name": {
-            "type": "string",
-            "example": "J k"
-          },
-          "email": {
-            "type": "string",
-            "example": "John123@gmail.com"
-          }
-        }
-      },
-      "inline_response_201": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "example": "User created"
-          }
-        }
-      },
-      "inline_response_200": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/inline_response_200_data"
-          }
-        }
-      },
-      "inline_response_200_data": {
-        "type": "object",
-        "properties": {
-          "userid": {
-            "type": "number",
-            "example": 1
-          },
-          "first_name": {
-            "type": "string",
-            "example": "John"
-          },
-          "last_name": {
-            "type": "string",
-            "example": "J"
-          },
-          "email": {
-            "type": "string",
-            "example": "John@gmail.com"
-          },
-          "token": {
-            "type": "string",
-            "example": "JWT Token"
+  "paths" : {
+    "/register" : {
+      "put" : {
+        "summary" : "Register user data",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "required" : [ "first_name", "last_name", "email", "password" ],
+                "properties" : {
+                  "first_name" : {
+                    "type" : "string",
+                    "example" : "John"
+                  },
+                  "last_name" : {
+                    "type" : "string",
+                    "example" : "J"
+                  },
+                  "email" : {
+                    "type" : "string",
+                    "example" : "John@gmail.com"
+                  },
+                  "password" : {
+                    "type" : "string",
+                    "example" : "qwerty"
+                  }
+                }
+              }
+            }
           }
         },
-        "example": null
-      },
-      "inline_response_401": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "example": "Incorrect username or password"
+        "responses" : {
+          "201" : {
+            "description" : "Successfully created response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string",
+                      "example" : "User created"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "User already exist",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Email already exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "internal server error"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+    "/login" : {
+      "post" : {
+        "summary" : "Login user and returns user info",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "required" : [ "email", "password" ],
+                "properties" : {
+                  "email" : {
+                    "type" : "string",
+                    "example" : "John@gmail.com"
+                  },
+                  "password" : {
+                    "type" : "string",
+                    "example" : "qwerty"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successfully logged in",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "userid" : {
+                          "type" : "number",
+                          "example" : 1
+                        },
+                        "first_name" : {
+                          "type" : "string",
+                          "example" : "John"
+                        },
+                        "last_name" : {
+                          "type" : "string",
+                          "example" : "J"
+                        },
+                        "email" : {
+                          "type" : "string",
+                          "example" : "John@gmail.com"
+                        },
+                        "token" : {
+                          "type" : "string",
+                          "example" : "JWT Token"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string",
+                      "example" : "Incorrect username or password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "internal server error"
+          }
+        }
+      }
+    },
+    "/update-profile" : {
+      "patch" : {
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Update user profile",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "required" : [ "first_name", "last_name", "email" ],
+                "properties" : {
+                  "first_name" : {
+                    "type" : "string",
+                    "example" : "John"
+                  },
+                  "last_name" : {
+                    "type" : "string",
+                    "example" : "J k"
+                  },
+                  "email" : {
+                    "type" : "string",
+                    "example" : "John123@gmail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Profile updated",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string"
+                    },
+                    "data" : {
+                      "type" : "object",
+                      "properties" : {
+                        "userid" : {
+                          "type" : "number",
+                          "example" : 1
+                        },
+                        "first_name" : {
+                          "type" : "string",
+                          "example" : "John"
+                        },
+                        "last_name" : {
+                          "type" : "string",
+                          "example" : "J k"
+                        },
+                        "email" : {
+                          "type" : "string",
+                          "example" : "John123@gmail.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "500" : {
+            "description" : "internal server error"
+          }
+        }
       }
     }
-  }
+  },
+  "servers" : [ {
+    "description" : "DashX demo app backend",
+    "url" : "https://node.dashxdemo.com/"
+  } ]
 }
