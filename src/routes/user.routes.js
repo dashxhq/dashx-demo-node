@@ -90,9 +90,17 @@ const updateProfile = async (req, res) => {
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
+  const getUserQuery = 'select * from users where email = $1'
   const updateQuery =
     'update users set first_name = $1, last_name = $2, email = $3 where id = $4 returning *'
   try {
+    if (req.user.email !== req.body.email) {
+      const existingUser = await executeQuery(getUserQuery, [req.body.email])
+      if (existingUser.rowCount) {
+        return res.status(409).json({ message: 'Email already exist' })
+      }
+    }
+
     const user = await executeQuery(updateQuery, [
       req.body.first_name || req.user.first_name,
       req.body.last_name || req.user.last_name,
