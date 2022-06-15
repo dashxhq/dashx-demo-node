@@ -1,4 +1,4 @@
-# based on https://github.com/github/gitignore/blob/main/Node.gitignore
+# Based on https://github.com/github/gitignore/blob/main/Node.gitignore
 # Logs
 logs
 *.log
