@@ -10,7 +10,6 @@ const executeQuery = require('../configs/db.config')
 // handlers
 const registerUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body
-
   if (!first_name || !last_name || !email || !password) {
     return res.status(400).json({ message: 'All fields are required' })
   }
@@ -44,9 +43,7 @@ const registerUser = async (req, res) => {
       message: 'user created',
       data: {
         id: user.rows[0].id,
-        first_name,
-        last_name,
-        email,
+        ...userData,
       },
     })
   } catch (error) {
