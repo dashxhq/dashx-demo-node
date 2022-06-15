@@ -112,13 +112,27 @@ const updateProfile = async (req, res) => {
   }
 }
 
+const unauthorizedLogin = (req, res) => {
+  return res.status(401).json({ message: 'Incorrect username or password' })
+}
+
 //routes
 router.put('/register', registerUser)
-router.post('/login', passport.authenticate('local', { session: false }), login)
+router.post(
+  '/login',
+  passport.authenticate('local', {
+    session: false,
+    failureRedirect: '/unauthorized',
+  }),
+  login
+)
+
 router.patch(
   '/update-profile',
   passport.authenticate('jwt', { session: false }),
   updateProfile
 )
+
+router.get('/unauthorized', unauthorizedLogin)
 
 module.exports = router
