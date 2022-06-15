@@ -1,4 +1,4 @@
-const executeQuery = require('../configs/db.config')
+const executeQuery = require('./db.service')
 
 const createUsersTableQuery = `CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
@@ -11,6 +11,7 @@ const createUsersTableQuery = `CREATE TABLE IF NOT EXISTS users (
 const seedDatabase = async () => {
   try {
     await executeQuery(createUsersTableQuery)
+    console.log('Database seeded')
   } catch (error) {
     throw error
   }
