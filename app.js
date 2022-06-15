@@ -1,13 +1,13 @@
 const express = require('express')
 const cors = require('cors')
-const dotEnv = require('dotenv')
+require('dotenv').config()
 const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
+
 const swaggerDocument = require('./swagger.json')
 const userRoutes = require('./src/routes/user.routes')
 
 const app = express()
-dotEnv.config()
 
 app.use(cors())
 app.use(express.json())

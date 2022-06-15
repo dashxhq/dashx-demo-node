@@ -3,7 +3,7 @@ const localStrategy = require('passport-local').Strategy
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 
-const executeQuery = require('../configs/db.config')
+const executeQuery = require('../services/db.service')
 
 module.exports = function (passport) {
   const getUserQuery = 'select * from users where email = $1'

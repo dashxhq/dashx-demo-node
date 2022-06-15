@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const router = express.Router()
 
-const dx = require('../configs/dashx.config')
-const executeQuery = require('../configs/db.config')
+const dx = require('../services/dashx.service')
+const executeQuery = require('../services/db.service')
 
 // handlers
 const registerUser = async (req, res) => {
