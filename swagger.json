@@ -250,8 +250,14 @@
       }
     }
   },
-  "servers" : [ {
-    "description" : "DashX demo app backend",
-    "url" : "https://node.dashxdemo.com/"
-  } ]
+  "servers" : [
+    {
+      "description" : "Node.js Backend",
+      "url" : "https://node.dashxdemo.com/"
+    },
+    {
+      "description" : "Python Backend",
+      "url" : "https://python.dashxdemo.com/"
+    },
+  ]
 }
