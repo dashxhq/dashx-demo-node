@@ -15,7 +15,7 @@ module.exports = function (passport) {
     new localStrategy(
       {
         usernameField: 'email',
-        passwordField: 'password',
+        passwordField: 'password'
       },
       async (email, password, done) => {
         try {
@@ -30,13 +30,13 @@ module.exports = function (passport) {
               return done(null, user.rows[0])
             } else {
               return done(null, false, {
-                message: 'Incorrect username or password.',
+                message: 'Incorrect username or password.'
               })
             }
           })
         } catch (error) {
           return done(null, false, {
-            message: 'Incorrect username or password.',
+            message: 'Incorrect username or password.'
           })
         }
       }

@@ -28,19 +28,19 @@ const registerUser = async (req, res) => {
       first_name,
       last_name,
       email,
-      hashedPassword,
+      hashedPassword
     ])
 
     const userData = {
       first_name: user.rows[0].first_name,
       last_name: user.rows[0].last_name,
-      email: user.rows[0].email,
+      email: user.rows[0].email
     }
 
     await dx.identify(user.rows[0].id, userData)
     await dx.track('User Registered', String(user.rows[0].id), userData)
     return res.status(201).json({
-      message: 'user created',
+      message: 'user created'
     })
   } catch (error) {
     return res.status(500).json({ message: error })
@@ -59,13 +59,13 @@ const login = async (req, res) => {
         id,
         session: {
           id,
-          dashxToken,
-        },
+          dashxToken
+        }
       })
     ),
     'nodeauthsecret',
     {
-      expiresIn: 86400 * 30,
+      expiresIn: 86400 * 30
     }
   )
 
@@ -76,8 +76,8 @@ const login = async (req, res) => {
       first_name,
       last_name,
       email,
-      token,
-    },
+      token
+    }
   })
 }
 
@@ -101,13 +101,13 @@ const updateProfile = async (req, res) => {
       req.body.first_name || req.user.first_name,
       req.body.last_name || req.user.last_name,
       req.body.email || req.user.email,
-      req.user.id,
+      req.user.id
     ])
 
     dx.identify(user.rows[0].id, {
       first_name: user.rows[0].first_name,
       last_name: user.rows[0].last_name,
-      email: user.rows[0].email,
+      email: user.rows[0].email
     })
 
     return res.status(200).json({
@@ -116,8 +116,8 @@ const updateProfile = async (req, res) => {
         id: user.rows[0].id,
         first_name: user.rows[0].first_name,
         last_name: user.rows[0].last_name,
-        email: user.rows[0].email,
-      },
+        email: user.rows[0].email
+      }
     })
   } catch (error) {
     return res.status(500).json({ message: error })
@@ -134,7 +134,7 @@ router.post(
   '/login',
   passport.authenticate('local', {
     session: false,
-    failureRedirect: '/unauthorized',
+    failureRedirect: '/unauthorized'
   }),
   login
 )
