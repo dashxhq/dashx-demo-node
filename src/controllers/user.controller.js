@@ -54,7 +54,7 @@ const login = async (req, res) => {
         dashxToken: dx.generateIdentityToken(user.id)
       }
     },
-    'nodeauthsecret',
+    process.env.JWT_SECRET,
     {
       expiresIn: 86400 * 30
     }

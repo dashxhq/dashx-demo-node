@@ -8,7 +8,7 @@ const executeQuery = require('../services/db.service')
 module.exports = function (passport) {
   const opts = {}
   opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-  opts.secretOrKey = 'nodeauthsecret'
+  opts.secretOrKey = process.env.JWT_SECRET
 
   passport.use(
     new localStrategy(
