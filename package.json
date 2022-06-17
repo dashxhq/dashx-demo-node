@@ -28,5 +28,8 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "prettier": "2.7.1"
   }
 }
