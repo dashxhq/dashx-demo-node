@@ -74,6 +74,7 @@ const updateProfile = async (req, res) => {
         'SELECT * FROM users WHERE email = $1',
         [req.body.email]
       )
+
       if (existingUser.rowCount) {
         return res.status(409).json({ message: 'Email already exist' })
       }
