@@ -129,7 +129,7 @@ const unauthorizedLogin = (req, res) => {
 }
 
 //routes
-router.put('/register', registerUser)
+router.post('/register', registerUser)
 router.post(
   '/login',
   passport.authenticate('local', {
