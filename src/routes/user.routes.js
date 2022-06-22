@@ -5,7 +5,8 @@ const userController = require('../controllers/user.controller')
 
 const router = express.Router()
 
-router.put('/register', userController.registerUser)
+//routes
+router.post('/register', userController.registerUser)
 router.post(
   '/login',
   passport.authenticate('local', {
