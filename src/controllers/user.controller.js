@@ -111,26 +111,24 @@ const unauthorizedLogin = (req, res) => {
 
 const forgotPassword = async (req, res) => {
   if (!req.body.email.trim()) {
-    return res.status(400).json({ message: `Email is required.` })
+    return res.status(400).json({ message: 'Email is required.' })
   }
 
-  const getUserQuery = 'select * from users where email = $1'
   try {
-    const users = await executeQuery(getUserQuery, [req.body.email])
+    const users = await executeQuery('SELECT * FROM users WHERE email = $1', [
+      req.body.email
+    ])
     const user = users.rows[0]
 
     if (!user) {
       return res
         .status(404)
-        .json({ message: `This email does not exist in our records.` })
+        .json({ message: 'This email does not exist in our records.' })
     }
 
-    const token = jwt.sign(
-      { email: user.email },
-      process.env.JWT_SECRET,
-      'nodeauthsecret',
-      { expiresIn: '15m' }
-    )
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: '15m'
+    })
 
     await dx.deliver('email/forgot-password', {
       to: user.email,
