@@ -7,19 +7,10 @@ const executeQuery = require('../services/db.service')
 const registerUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body
   if (!first_name || !last_name || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required' })
+    return res.status(422).json({ message: 'All fields are required.' })
   }
 
   try {
-    const existingUser = await executeQuery(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
-    )
-
-    if (existingUser.rowCount) {
-      return res.status(409).json({ message: 'User already exists' })
-    }
-
     const {
       rows: [user]
     } = await executeQuery(
@@ -36,8 +27,11 @@ const registerUser = async (req, res) => {
     await dx.identify(user.id, userData)
     await dx.track('User Registered', String(user.id), userData)
 
-    return res.status(201).json({ message: 'User created' })
+    return res.status(201).json({ message: 'User created.' })
   } catch (error) {
+    if (error.constraint === 'users_email_key') {
+      return res.status(409).json({ message: 'User already exists.' })
+    }
     return res.status(500).json({ message: error })
   }
 }
@@ -48,11 +42,8 @@ const login = async (req, res) => {
 
   const token = jwt.sign(
     {
-      ...user,
-      session: {
-        id: user.id,
-        dashxToken: dx.generateIdentityToken(user.id)
-      }
+      user,
+      dashx_token: dx.generateIdentityToken(user.id)
     },
     process.env.JWT_SECRET,
     {
@@ -60,12 +51,12 @@ const login = async (req, res) => {
     }
   )
 
-  res.status(200).json({ message: 'user logged in', data: { ...user, token } })
+  res.status(200).json({ message: 'User logged in.', token })
 }
 
 const updateProfile = async (req, res) => {
   if (!req.user) {
-    return res.status(401).json({ message: 'Unauthorized' })
+    return res.status(401).json({ message: 'Unauthorized.' })
   }
 
   try {
@@ -76,7 +67,7 @@ const updateProfile = async (req, res) => {
       )
 
       if (existingUser.rowCount) {
-        return res.status(409).json({ message: 'Email already exist' })
+        return res.status(409).json({ message: 'Email already exist.' })
       }
     }
 
@@ -99,14 +90,14 @@ const updateProfile = async (req, res) => {
       email: user.email
     })
 
-    return res.status(200).json({ message: 'profile updated', data: user })
+    return res.status(200).json({ message: 'Profile updated.', user })
   } catch (error) {
     return res.status(500).json({ message: error })
   }
 }
 
 const unauthorizedLogin = (req, res) => {
-  return res.status(401).json({ message: 'Incorrect username or password' })
+  return res.status(401).json({ message: 'Incorrect username or password.' })
 }
 
 const forgotPassword = async (req, res) => {

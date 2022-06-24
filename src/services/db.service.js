@@ -18,7 +18,7 @@ async function executeQuery(query, values) {
   try {
     return await pool.query(query, values)
   } catch (e) {
-    console.log(e.stack)
+    throw e
   }
 }
 
