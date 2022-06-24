@@ -24,4 +24,6 @@ router.patch(
 
 router.get('/unauthorized', userController.unauthorizedLogin)
 
+router.post('/forgot-password', userController.forgotPassword)
+
 module.exports = router

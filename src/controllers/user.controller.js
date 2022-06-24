@@ -109,4 +109,47 @@ const unauthorizedLogin = (req, res) => {
   return res.status(401).json({ message: 'Incorrect username or password' })
 }
 
-module.exports = { registerUser, login, updateProfile, unauthorizedLogin }
+const forgotPassword = async (req, res) => {
+  if (!req.body.email.trim()) {
+    return res.status(400).json({ message: `Email is required.` })
+  }
+
+  const getUserQuery = 'select * from users where email = $1'
+  try {
+    const users = await executeQuery(getUserQuery, [req.body.email])
+    const user = users.rows[0]
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: `This email does not exist in our records.` })
+    }
+
+    const token = jwt.sign(
+      { email: user.email },
+      process.env.JWT_SECRET,
+      'nodeauthsecret',
+      { expiresIn: '15m' }
+    )
+
+    await dx.deliver('email/forgot-password', {
+      to: user.email,
+      data: { token }
+    })
+
+    return res.status(200).json({
+      message: 'Check your inbox for a link to reset your password.'
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: error })
+  }
+}
+
+module.exports = {
+  registerUser,
+  login,
+  updateProfile,
+  unauthorizedLogin,
+  forgotPassword
+}
