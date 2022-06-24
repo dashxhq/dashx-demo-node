@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
     }
 
     await dx.identify(user.id, userData)
-    await dx.track('User Registered.', String(user.id), userData)
+    await dx.track('User Registered', String(user.id), userData)
 
     return res.status(201).json({ message: 'User created.' })
   } catch (error) {
