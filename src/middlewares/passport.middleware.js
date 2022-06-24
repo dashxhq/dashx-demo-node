@@ -48,7 +48,7 @@ module.exports = function (passport) {
     new JwtStrategy(opts, async function (jwtPayload, done) {
       try {
         const user = await executeQuery('SELECT * FROM users WHERE id = $1', [
-          jwtPayload.id
+          jwtPayload.user.id
         ])
 
         if (!user.rowCount) {
