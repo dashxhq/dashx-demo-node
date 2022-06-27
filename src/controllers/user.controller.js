@@ -19,13 +19,13 @@ const registerUser = async (req, res) => {
     )
 
     const userData = {
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.first_name,
+      lastName: user.last_name,
       email: user.email
     }
 
     await dx.identify(user.id, userData)
-    await dx.track('User Registered', String(user.id), userData)
+    await dx.track('User Registered', user.id, userData)
 
     return res.status(201).json({ message: 'User created.' })
   } catch (error) {
@@ -85,8 +85,8 @@ const updateProfile = async (req, res) => {
     )
 
     dx.identify(user.id, {
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.first_name,
+      lastName: user.last_name,
       email: user.email
     })
 
