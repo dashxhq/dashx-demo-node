@@ -1,3 +1,4 @@
+require('dotenv').config()
 const executeQuery = require('./db.service')
 
 const createUsersTableQuery = `CREATE TABLE IF NOT EXISTS users (
