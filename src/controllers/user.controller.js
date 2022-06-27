@@ -135,10 +135,45 @@ const forgotPassword = async (req, res) => {
   }
 }
 
+const resetPassword = async (req, res) => {
+  if (!req.body.token) {
+    return res.status(400).json({ message: 'Token is required.' })
+  }
+
+  if (!req.body.password) {
+    return res.status(400).json({ message: 'Password is required.' })
+  }
+
+  try {
+    const jwtPayload = jwt.verify(req.body.token, process.env.JWT_SECRET)
+
+    const { rowCount } = await executeQuery(
+      'UPDATE users SET password = $1 WHERE email = $2 RETURNING id',
+      [bcrypt.hashSync(req.body.password, 10), jwtPayload.email]
+    )
+
+    if (!rowCount) {
+      return res.status(422).json({ message: 'Invalid reset password link.' })
+    }
+
+    return res.status(200).json({
+      message: 'You have successfully reset your password.'
+    })
+  } catch (error) {
+    if (error.name == 'TokenExpiredError') {
+      return res
+        .status(422)
+        .json({ message: 'Your reset password link has expired.' })
+    }
+    return res.status(500).json({ message: error })
+  }
+}
+
 module.exports = {
   registerUser,
   login,
   updateProfile,
   unauthorizedLogin,
-  forgotPassword
+  forgotPassword,
+  resetPassword
 }
