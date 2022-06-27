@@ -23,7 +23,7 @@ router.patch(
 )
 
 router.get('/unauthorized', userController.unauthorizedLogin)
-
 router.post('/forgot-password', userController.forgotPassword)
+router.post('/contact', userController.contact)
 
 module.exports = router

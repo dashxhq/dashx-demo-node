@@ -135,10 +135,36 @@ const forgotPassword = async (req, res) => {
   }
 }
 
+const contact = async (req, res) => {
+  if (!req.body.email.trim()) {
+    return res.status(422).json({ message: 'Email is required.' })
+  }
+
+  try {
+    await dx.deliver('email', {
+      content: {
+        name: 'Contact us',
+        from: 'noreply@dashxdemo.com',
+        to: [req.body.email, 'sales@dashx.com'],
+        subject: 'Contact Us Form',
+        plainBody: 'Thanks for reaching out! We will get back to you soon!'
+      }
+    })
+
+    return res.status(200).json({
+      message: 'Thanks for reaching out! We will get back to you soon.'
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: error })
+  }
+}
+
 module.exports = {
   registerUser,
   login,
   updateProfile,
   unauthorizedLogin,
-  forgotPassword
+  forgotPassword,
+  contact
 }
