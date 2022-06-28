@@ -34,10 +34,10 @@ module.exports = function (passport) {
 
           return isPasswordMatch
             ? done(null, user.rows[0])
-            : done(null, false, { message: 'Incorrect username or password.' })
+            : done(null, false, { message: 'Incorrect email or password.' })
         } catch (error) {
           return done(null, false, {
-            message: 'Incorrect username or password.'
+            message: 'Incorrect email or password.'
           })
         }
       }

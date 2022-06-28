@@ -97,7 +97,7 @@ const updateProfile = async (req, res) => {
 }
 
 const unauthorizedLogin = (req, res) => {
-  return res.status(401).json({ message: 'Incorrect username or password.' })
+  return res.status(401).json({ message: 'Incorrect email or password.' })
 }
 
 const forgotPassword = async (req, res) => {
