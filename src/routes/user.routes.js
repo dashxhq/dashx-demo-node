@@ -16,6 +16,12 @@ router.post(
   userController.login
 )
 
+router.get(
+  '/profile',
+  passport.authenticate('jwt', { session: false }),
+  userController.getProfile
+)
+
 router.patch(
   '/update-profile',
   passport.authenticate('jwt', { session: false }),

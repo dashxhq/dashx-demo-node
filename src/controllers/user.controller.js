@@ -194,9 +194,30 @@ const resetPassword = async (req, res) => {
   }
 }
 
+const getProfile = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
+
+  try {
+    const {
+      rows: [user]
+    } = await executeQuery(
+      `SELECT id, first_name, last_name, email FROM users
+       WHERE id = $1`,
+      [req.user.id]
+    )
+
+    return res.status(200).json({ message: 'Successfully fetched.', user })
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+}
+
 module.exports = {
   registerUser,
   login,
+  getProfile,
   updateProfile,
   unauthorizedLogin,
   forgotPassword,
