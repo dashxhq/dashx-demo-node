@@ -19,13 +19,13 @@ const registerUser = async (req, res) => {
     )
 
     const userData = {
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.first_name,
+      lastName: user.last_name,
       email: user.email
     }
 
     await dx.identify(user.id, userData)
-    await dx.track('User Registered', String(user.id), userData)
+    await dx.track('User Registered', user.id, userData)
 
     return res.status(201).json({ message: 'User created.' })
   } catch (error) {
@@ -85,8 +85,8 @@ const updateProfile = async (req, res) => {
     )
 
     dx.identify(user.id, {
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.first_name,
+      lastName: user.last_name,
       email: user.email
     })
 
@@ -135,6 +135,47 @@ const forgotPassword = async (req, res) => {
   }
 }
 
+const contact = async (req, res) => {
+  const { name, email, feedback } = req.body
+  if (!name || !email || !feedback) {
+    return res.status(422).json({ message: 'All fields are required.' })
+  }
+
+  try {
+    await dx.deliver('email', {
+      content: {
+        name: 'Contact us',
+        from: 'noreply@dashxdemo.com',
+        to: [email, 'sales@dashx.com'],
+        subject: 'Contact Us Form',
+        html_body: `
+          <mjml>
+            <mj-body>
+              <mj-section>
+                <mj-column>
+                  <mj-divider border-color="#F45E43"></mj-divider>
+                  <mj-text>Thanks for reaching out! We will get back to you soon!</mj-text>
+                  <mj-text>Your feedback: </mj-text>
+                  <mj-text>Name: ${name}</mj-text>
+                  <mj-text>Email: ${email}</mj-text>
+                  <mj-text>Feedback: ${feedback}</mj-text>
+                  <mj-divider border-color="#F45E43"></mj-divider>
+                </mj-column>
+              </mj-section>
+            </mj-body>
+          </mjml>`
+      }
+    })
+
+    return res.status(200).json({
+      message: 'Thanks for reaching out! We will get back to you soon.'
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: error })
+  }
+}
+
 const resetPassword = async (req, res) => {
   if (!req.body.token) {
     return res.status(400).json({ message: 'Token is required.' })
@@ -169,11 +210,33 @@ const resetPassword = async (req, res) => {
   }
 }
 
+const getProfile = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
+
+  try {
+    const {
+      rows: [user]
+    } = await executeQuery(
+      `SELECT id, first_name, last_name, email FROM users
+       WHERE id = $1`,
+      [req.user.id]
+    )
+
+    return res.status(200).json({ message: 'Successfully fetched.', user })
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+}
+
 module.exports = {
   registerUser,
   login,
+  getProfile,
   updateProfile,
   unauthorizedLogin,
   forgotPassword,
+  contact,
   resetPassword
 }
