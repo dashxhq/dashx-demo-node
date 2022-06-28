@@ -136,8 +136,9 @@ const forgotPassword = async (req, res) => {
 }
 
 const contact = async (req, res) => {
-  if (!req.body.email.trim()) {
-    return res.status(422).json({ message: 'Email is required.' })
+  const { name, email, feedback } = req.body
+  if (!name || !email || !feedback) {
+    return res.status(422).json({ message: 'All fields are required.' })
   }
 
   try {
@@ -145,9 +146,24 @@ const contact = async (req, res) => {
       content: {
         name: 'Contact us',
         from: 'noreply@dashxdemo.com',
-        to: [req.body.email, 'sales@dashx.com'],
+        to: [email, 'sales@dashx.com'],
         subject: 'Contact Us Form',
-        plainBody: 'Thanks for reaching out! We will get back to you soon!'
+        html_body: `
+          <mjml>
+            <mj-body>
+              <mj-section>
+                <mj-column>
+                  <mj-divider border-color="#F45E43"></mj-divider>
+                  <mj-text>Thanks for reaching out! We will get back to you soon!</mj-text>
+                  <mj-text>Your feedback: </mj-text>
+                  <mj-text>Name: ${name}</mj-text>
+                  <mj-text>Email: ${email}</mj-text>
+                  <mj-text>Feedback: ${feedback}</mj-text>
+                  <mj-divider border-color="#F45E43"></mj-divider>
+                </mj-column>
+              </mj-section>
+            </mj-body>
+          </mjml>`
       }
     })
 
