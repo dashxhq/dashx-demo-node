@@ -32,5 +32,16 @@ router.get('/unauthorized', userController.unauthorizedLogin)
 router.post('/forgot-password', userController.forgotPassword)
 router.post('/reset-password', userController.resetPassword)
 router.post('/contact', userController.contact)
+router.get(
+  '/post',
+  passport.authenticate('jwt', { session: false }),
+  userController.getPosts
+)
+
+router.post(
+  '/post',
+  passport.authenticate('jwt', { session: false }),
+  userController.createPost
+)
 
 module.exports = router
