@@ -230,6 +230,61 @@ const getProfile = async (req, res) => {
   }
 }
 
+const createPost = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
+
+  try {
+    const {
+      rows: [post]
+    } = await executeQuery(
+      'INSERT INTO posts (user_id, text) VALUES ($1, $2) RETURNING *',
+      [req.user.id, req.body.text]
+    )
+
+    return res.status(200).json({ message: 'Successfully created post.', post })
+  } catch (error) {
+    if (error.code === '23502') {
+      return res.status(422).json({ message: `Missing field ${error.column}.` })
+    }
+
+    return res.status(500).json({ message: error })
+  }
+}
+
+const getPosts = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
+
+  try {
+    const { rows } = await executeQuery(
+      `SELECT posts.*, first_name, last_name, email FROM posts
+      INNER JOIN users ON posts.user_id = users.id
+      ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2`,
+      [req.body.limit, req.body.offset]
+    )
+
+    rows.forEach((post) => {
+      post.user = {
+        id: post.user_id,
+        first_name: post.first_name,
+        last_name: post.last_name,
+        email: post.email
+      }
+      delete post.first_name
+      delete post.last_name
+      delete post.email
+    })
+
+    return res.status(200).json({ posts: rows })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: error })
+  }
+}
+
 module.exports = {
   registerUser,
   login,
@@ -238,5 +293,7 @@ module.exports = {
   unauthorizedLogin,
   forgotPassword,
   contact,
-  resetPassword
+  resetPassword,
+  createPost,
+  getPosts
 }
