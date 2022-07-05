@@ -263,7 +263,7 @@ const getPosts = async (req, res) => {
       `SELECT posts.*, first_name, last_name, email FROM posts
       INNER JOIN users ON posts.user_id = users.id
       ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2`,
-      [req.body.per_page, req.body.page]
+      [req.body.limit, req.body.offset]
     )
 
     return res.status(200).json({ posts: rows })
