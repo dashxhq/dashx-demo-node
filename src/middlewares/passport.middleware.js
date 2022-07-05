@@ -29,7 +29,7 @@ module.exports = function (passport) {
 
           const isPasswordMatch = bcrypt.compareSync(
             password,
-            user.rows[0].password
+            user.rows[0].encrypted_password
           )
 
           return isPasswordMatch
