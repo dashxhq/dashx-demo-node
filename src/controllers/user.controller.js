@@ -14,7 +14,7 @@ const registerUser = async (req, res) => {
     const {
       rows: [user]
     } = await executeQuery(
-      'INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO users (first_name, last_name, email, encrypted_password) VALUES ($1, $2, $3, $4) RETURNING *',
       [first_name, last_name, email, bcrypt.hashSync(password, 10)]
     )
 
@@ -38,7 +38,7 @@ const registerUser = async (req, res) => {
 
 const login = async (req, res) => {
   const user = req.user
-  delete user.password
+  delete user.encrypted_password
 
   const token = jwt.sign(
     {
@@ -189,7 +189,7 @@ const resetPassword = async (req, res) => {
     const jwtPayload = jwt.verify(req.body.token, process.env.JWT_SECRET)
 
     const { rowCount } = await executeQuery(
-      'UPDATE users SET password = $1 WHERE email = $2 RETURNING id',
+      'UPDATE users SET encrypted_password = $1 WHERE email = $2 RETURNING id',
       [bcrypt.hashSync(req.body.password, 10), jwtPayload.email]
     )
 
