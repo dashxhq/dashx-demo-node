@@ -266,6 +266,18 @@ const getPosts = async (req, res) => {
       [req.body.limit, req.body.offset]
     )
 
+    rows.forEach((post) => {
+      post.user = {
+        id: post.user_id,
+        first_name: post.first_name,
+        last_name: post.last_name,
+        email: post.email
+      }
+      delete post.first_name
+      delete post.last_name
+      delete post.email
+    })
+
     return res.status(200).json({ posts: rows })
   } catch (error) {
     console.log(error)
