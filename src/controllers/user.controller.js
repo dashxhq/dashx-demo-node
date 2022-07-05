@@ -258,19 +258,12 @@ const getPosts = async (req, res) => {
     return res.status(401).json({ message: 'Unauthorized.' })
   }
 
-  const values = [req.user.id, req.body.limit || 5]
-  let str = ''
-  if (req.body.post_id) {
-    values.push(req.body.post_id)
-    str = 'AND posts.id < $3'
-  }
-
   try {
     const { rows } = await executeQuery(
       `SELECT posts.*, first_name, last_name, email FROM posts
-      INNER JOIN users ON posts.user_id = users.id WHERE users.id = $1 ${str}
-      ORDER BY posts.created_at DESC LIMIT $2`,
-      values
+      INNER JOIN users ON posts.user_id = users.id
+      ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2`,
+      [req.body.per_page, req.body.page]
     )
 
     return res.status(200).json({ posts: rows })
