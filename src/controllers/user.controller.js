@@ -263,7 +263,7 @@ const getPosts = async (req, res) => {
       `SELECT posts.*, first_name, last_name, email FROM posts
       INNER JOIN users ON posts.user_id = users.id
       ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2`,
-      [req.body.limit, req.body.offset]
+      [req.query.limit, req.query.offset]
     )
 
     rows.forEach((post) => {
