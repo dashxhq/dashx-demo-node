@@ -285,40 +285,24 @@ const getPosts = async (req, res) => {
   }
 }
 
-const createBookmark = async (req, res) => {
+const toggleBookmark = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized.' })
   }
 
   try {
     await executeQuery(
-      `INSERT INTO bookmarks (post_id, user_id) VALUES ($1, $2) RETURNING *`,
-      [req.body.post_id, req.user.id]
+      `INSERT INTO bookmarks (user_id, post_id) VALUES ($1, $2) ON CONFLICT (user_id, post_id)
+      DO UPDATE SET bookmarked_at = (CASE WHEN bookmarks.bookmarked_at IS NULL THEN NOW() ELSE NULL END);`,
+      [req.user.id, req.params.post_id]
     )
 
-    return res.status(200).json({ message: 'Bookmark created' })
+    return res.status(204).json()
   } catch (error) {
     if (error.code === '23503') {
       return res.status(404).json({ message: `Post not found.` })
     }
-
-    return res.status(500).json({ message: error })
-  }
-}
-
-const deleteBookmark = async (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'Unauthorized.' })
-  }
-
-  try {
-    await executeQuery(
-      `DELETE FROM bookmarks WHERE post_id = $1 AND user_id = $2`,
-      [req.body.post_id, req.user.id]
-    )
-
-    return res.status(200).json({ message: 'Bookmark deleted' })
-  } catch (error) {
+    console.log(error)
     return res.status(500).json({ message: error })
   }
 }
@@ -330,10 +314,10 @@ const getBookmark = async (req, res) => {
 
   try {
     const { rows } = await executeQuery(
-      `SELECT posts.*, first_name, last_name, email, bookmarks.id as bookmark_id FROM posts
+      `SELECT posts.*, first_name, last_name, email, bookmarks.id as bookmark_id, bookmarked_at FROM posts
       INNER JOIN users ON posts.user_id = users.id
       INNER JOIN bookmarks ON posts.id = bookmarks.post_id
-      where bookmarks.user_id = $1
+      where bookmarks.user_id = $1 AND bookmarks.bookmarked_at IS NOT NULL
       ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3`,
       [req.user.id, req.query.limit, req.query.offset]
     )
@@ -369,7 +353,6 @@ module.exports = {
   resetPassword,
   createPost,
   getPosts,
-  createBookmark,
-  deleteBookmark,
+  toggleBookmark,
   getBookmark
 }

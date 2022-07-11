@@ -45,16 +45,10 @@ router.post(
   userController.createPost
 )
 
-router.post(
-  '/bookmarks',
+router.put(
+  '/posts/:post_id/bookmark',
   passport.authenticate('jwt', { session: false }),
-  userController.createBookmark
-)
-
-router.delete(
-  '/bookmarks',
-  passport.authenticate('jwt', { session: false }),
-  userController.deleteBookmark
+  userController.toggleBookmark
 )
 
 router.get(
