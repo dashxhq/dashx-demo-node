@@ -285,6 +285,79 @@ const getPosts = async (req, res) => {
   }
 }
 
+const createBookmark = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
+
+  try {
+    await executeQuery(
+      `INSERT INTO bookmarks (post_id, user_id) VALUES ($1, $2) RETURNING *`,
+      [req.body.post_id, req.user.id]
+    )
+
+    return res.status(200).json({ message: 'Bookmark created' })
+  } catch (error) {
+    if (error.code === '23503') {
+      return res.status(404).json({ message: `Post not found.` })
+    }
+
+    return res.status(500).json({ message: error })
+  }
+}
+
+const deleteBookmark = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
+
+  try {
+    await executeQuery(
+      `DELETE FROM bookmarks WHERE post_id = $1 AND user_id = $2`,
+      [req.body.post_id, req.user.id]
+    )
+
+    return res.status(200).json({ message: 'Bookmark deleted' })
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+}
+
+const getBookmark = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized.' })
+  }
+
+  try {
+    const { rows } = await executeQuery(
+      `SELECT posts.*, first_name, last_name, email, bookmarks.id as bookmark_id FROM posts
+      INNER JOIN users ON posts.user_id = users.id
+      INNER JOIN bookmarks ON posts.id = bookmarks.post_id
+      where bookmarks.user_id = $1
+      ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3`,
+      [req.user.id, req.query.limit, req.query.offset]
+    )
+
+    rows.forEach((post) => {
+      post.user = {
+        id: post.user_id,
+        first_name: post.first_name,
+        last_name: post.last_name,
+        email: post.email
+      }
+      delete post.first_name
+      delete post.last_name
+      delete post.email
+    })
+
+    return res
+      .status(200)
+      .json({ message: 'Successfully fetched.', bookmarks: rows })
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+}
+
 module.exports = {
   registerUser,
   login,
@@ -295,5 +368,8 @@ module.exports = {
   contact,
   resetPassword,
   createPost,
-  getPosts
+  getPosts,
+  createBookmark,
+  deleteBookmark,
+  getBookmark
 }

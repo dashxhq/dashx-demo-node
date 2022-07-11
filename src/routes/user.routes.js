@@ -45,4 +45,22 @@ router.post(
   userController.createPost
 )
 
+router.post(
+  '/bookmarks',
+  passport.authenticate('jwt', { session: false }),
+  userController.createBookmark
+)
+
+router.delete(
+  '/bookmarks',
+  passport.authenticate('jwt', { session: false }),
+  userController.deleteBookmark
+)
+
+router.get(
+  '/bookmarks',
+  passport.authenticate('jwt', { session: false }),
+  userController.getBookmark
+)
+
 module.exports = router
