@@ -57,4 +57,16 @@ router.get(
   userController.getBookmark
 )
 
+router.get(
+  '/products',
+  passport.authenticate('jwt', { session: false }),
+  userController.getProducts
+)
+
+router.get(
+  '/products/:slug',
+  passport.authenticate('jwt', { session: false }),
+  userController.getSpecificProduct
+)
+
 module.exports = router
