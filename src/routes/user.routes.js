@@ -1,72 +1,74 @@
 const express = require('express')
 const passport = require('passport')
 
-const userController = require('../controllers/user.controller')
+const usersController = require('../controllers/user.controller')
+const postsController = require('../controllers/post.controller')
+const productsController = require('../controllers/product.controller')
 
 const router = express.Router()
 
 //routes
-router.post('/register', userController.registerUser)
+router.post('/register', usersController.registerUser)
 router.post(
   '/login',
   passport.authenticate('local', {
     session: false,
     failureRedirect: '/unauthorized'
   }),
-  userController.login
+  usersController.login
 )
 
 router.get(
   '/profile',
   passport.authenticate('jwt', { session: false }),
-  userController.getProfile
+  usersController.getProfile
 )
 
 router.patch(
   '/update-profile',
   passport.authenticate('jwt', { session: false }),
-  userController.updateProfile
+  usersController.updateProfile
 )
 
-router.get('/unauthorized', userController.unauthorizedLogin)
-router.post('/forgot-password', userController.forgotPassword)
-router.post('/reset-password', userController.resetPassword)
-router.post('/contact', userController.contact)
+router.get('/unauthorized', usersController.unauthorizedLogin)
+router.post('/forgot-password', usersController.forgotPassword)
+router.post('/reset-password', usersController.resetPassword)
+router.post('/contact', usersController.contact)
 
 router.get(
   '/posts',
   passport.authenticate('jwt', { session: false }),
-  userController.getPosts
+  postsController.getPosts
 )
 
 router.post(
   '/posts',
   passport.authenticate('jwt', { session: false }),
-  userController.createPost
+  postsController.createPost
 )
 
 router.put(
-  '/posts/:post_id/bookmark',
+  '/posts/:post_id/toggle_bookmark',
   passport.authenticate('jwt', { session: false }),
-  userController.toggleBookmark
+  postsController.toggleBookmark
 )
 
 router.get(
-  '/bookmarks',
+  '/posts/bookmarked',
   passport.authenticate('jwt', { session: false }),
-  userController.getBookmark
+  postsController.getBookmarkedPosts
 )
 
 router.get(
   '/products',
   passport.authenticate('jwt', { session: false }),
-  userController.getProducts
+  productsController.getProducts
 )
 
 router.get(
   '/products/:slug',
   passport.authenticate('jwt', { session: false }),
-  userController.getSpecificProduct
+  productsController.getProduct
 )
 
 module.exports = router
