@@ -30,9 +30,8 @@ const getPosts = async (req, res) => {
 
   try {
     const { rows } = await executeQuery(
-      `SELECT posts.*, first_name, last_name, email,
-      CASE WHEN bookmarks.bookmarked_at IS NULL THEN FALSE ELSE TRUE END AS is_bookmarked
-      FROM posts INNER JOIN users ON posts.user_id = users.id
+      `SELECT posts.*, first_name, last_name, email, bookmarked_at FROM posts
+      INNER JOIN users ON posts.user_id = users.id
       LEFT JOIN bookmarks ON bookmarks.post_id = posts.id and bookmarks.user_id = $1
       ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3`,
       [req.user.id, req.query.limit, req.query.offset]
