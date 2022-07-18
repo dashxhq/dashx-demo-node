@@ -25,7 +25,7 @@ router.get(
 )
 
 router.patch(
-  '/update-profile',
+  '/upload-avatar',
   passport.authenticate('jwt', { session: false }),
   usersController.updateProfile
 )
