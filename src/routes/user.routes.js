@@ -33,16 +33,4 @@ router.post('/forgot-password', userController.forgotPassword)
 router.post('/reset-password', userController.resetPassword)
 router.post('/contact', userController.contact)
 
-router.get(
-  '/posts',
-  passport.authenticate('jwt', { session: false }),
-  userController.getPosts
-)
-
-router.post(
-  '/posts',
-  passport.authenticate('jwt', { session: false }),
-  userController.createPost
-)
-
 module.exports = router
