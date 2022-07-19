@@ -1,3 +1,4 @@
+const dx = require('../services/dashx.service')
 const executeQuery = require('../services/db.service')
 
 const createPost = async (req, res) => {
@@ -13,6 +14,7 @@ const createPost = async (req, res) => {
       [req.user.id, req.body.text]
     )
 
+    dx.track('Post Created', req.user.id, post)
     return res.status(200).json({ message: 'Successfully created post.', post })
   } catch (error) {
     if (error.code === '23502') {
@@ -62,11 +64,20 @@ const toggleBookmark = async (req, res) => {
   }
 
   try {
-    await executeQuery(
+    const {
+      rows: [bookmark]
+    } = await executeQuery(
       `INSERT INTO bookmarks (user_id, post_id) VALUES ($1, $2) ON CONFLICT (user_id, post_id)
-      DO UPDATE SET bookmarked_at = (CASE WHEN bookmarks.bookmarked_at IS NULL THEN NOW() ELSE NULL END);`,
+      DO UPDATE SET bookmarked_at = (CASE WHEN bookmarks.bookmarked_at IS NULL THEN NOW() ELSE NULL END)
+      RETURNING *;`,
       [req.user.id, req.params.post_id]
     )
+
+    if (bookmark.bookmarked_at) {
+      dx.track('Post Bookmarked', req.user.id, bookmark)
+    } else {
+      dx.track('Post Unbookmarked', req.user.id, bookmark)
+    }
 
     return res.status(204).json()
   } catch (error) {
