@@ -96,7 +96,7 @@ const getBookmarkedPosts = async (req, res) => {
 
   try {
     const { rows } = await executeQuery(
-      `SELECT posts.*, first_name, last_name, email, bookmarks.id as bookmark_id, bookmarked_at FROM posts
+      `SELECT posts.*, first_name, last_name, email, bookmarked_at FROM posts
       INNER JOIN users ON posts.user_id = users.id
       INNER JOIN bookmarks ON posts.id = bookmarks.post_id
       where bookmarks.user_id = $1 AND bookmarks.bookmarked_at IS NOT NULL
@@ -118,7 +118,7 @@ const getBookmarkedPosts = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: 'Successfully fetched.', bookmarks: rows })
+      .json({ message: 'Successfully fetched.', posts: rows })
   } catch (error) {
     return res.status(500).json({ message: error })
   }
