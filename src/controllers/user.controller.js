@@ -220,7 +220,7 @@ const getProfile = async (req, res) => {
     const {
       rows: [user]
     } = await executeQuery(
-      `SELECT id, first_name, last_name, email FROM users
+      `SELECT id, first_name, last_name, email, avatar FROM users
        WHERE id = $1`,
       [req.user.id]
     )

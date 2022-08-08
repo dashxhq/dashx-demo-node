@@ -10,8 +10,8 @@ const createPost = async (req, res) => {
     const {
       rows: [post]
     } = await executeQuery(
-      'INSERT INTO posts (user_id, text) VALUES ($1, $2) RETURNING *',
-      [req.user.id, req.body.text]
+      'INSERT INTO posts (user_id, text, image, video) VALUES ($1, $2, $3, $4) RETURNING *',
+      [req.user.id, req.body.text, req.body.image, req.body.video]
     )
 
     dx.track('Post Created', req.user.id, post)
