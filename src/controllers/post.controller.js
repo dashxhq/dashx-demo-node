@@ -32,7 +32,7 @@ const getPosts = async (req, res) => {
 
   try {
     const { rows } = await executeQuery(
-      `SELECT posts.*, first_name, last_name, email, bookmarked_at FROM posts
+      `SELECT posts.*, first_name, last_name, email, avatar, bookmarked_at FROM posts
       INNER JOIN users ON posts.user_id = users.id
       LEFT JOIN bookmarks ON bookmarks.post_id = posts.id and bookmarks.user_id = $1
       ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3`,
@@ -44,11 +44,13 @@ const getPosts = async (req, res) => {
         id: post.user_id,
         first_name: post.first_name,
         last_name: post.last_name,
-        email: post.email
+        email: post.email,
+        avatar: post.avatar
       }
       delete post.first_name
       delete post.last_name
       delete post.email
+      delete post.avatar
     })
 
     return res.status(200).json({ posts: rows })
@@ -96,7 +98,7 @@ const getBookmarkedPosts = async (req, res) => {
 
   try {
     const { rows } = await executeQuery(
-      `SELECT posts.*, first_name, last_name, email, bookmarked_at FROM posts
+      `SELECT posts.*, first_name, last_name, email, avatar, bookmarked_at FROM posts
       INNER JOIN users ON posts.user_id = users.id
       INNER JOIN bookmarks ON posts.id = bookmarks.post_id
       where bookmarks.user_id = $1 AND bookmarks.bookmarked_at IS NOT NULL
@@ -109,11 +111,13 @@ const getBookmarkedPosts = async (req, res) => {
         id: post.user_id,
         first_name: post.first_name,
         last_name: post.last_name,
-        email: post.email
+        email: post.email,
+        avatar: post.avatar
       }
       delete post.first_name
       delete post.last_name
       delete post.email
+      delete post.avatar
     })
 
     return res
