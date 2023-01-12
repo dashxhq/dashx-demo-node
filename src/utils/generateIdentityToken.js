@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken')
 
 const generateIdentityToken = (kind, uid, user) => {
   const hmacSecret = process.env.DASHX_PRIVATE_KEY
