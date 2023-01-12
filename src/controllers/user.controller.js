@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const dx = require('../services/dashx.service')
 const executeQuery = require('../services/db.service')
 
+const generateIdentityToken = require('../utils/generateIdentityToken')
+
 const registerUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body
   if (!first_name || !last_name || !email || !password) {
@@ -40,16 +42,7 @@ const login = async (req, res) => {
   const user = req.user
   delete user.encrypted_password
 
-  const token = jwt.sign(
-    {
-      user,
-      dashx_token: dx.generateIdentityToken(user.id)
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: 86400 * 30
-    }
-  )
+  const token = generateIdentityToken('USER', user.id, user)
 
   res.status(200).json({ message: 'User logged in.', token })
 }
@@ -202,7 +195,7 @@ const resetPassword = async (req, res) => {
       message: 'You have successfully reset your password.'
     })
   } catch (error) {
-    if (error.name == 'TokenExpiredError') {
+    if (error.name === 'TokenExpiredError') {
       return res
         .status(422)
         .json({ message: 'Your reset password link has expired.' })
