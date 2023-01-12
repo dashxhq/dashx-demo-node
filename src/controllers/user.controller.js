@@ -42,9 +42,18 @@ const login = async (req, res) => {
   const user = req.user
   delete user.encrypted_password
 
-  const token = generateIdentityToken(user.id)
+  const token = jwt.sign(
+    {
+      user,
+      dashx_token: generateIdentityToken(user.id)
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: 86400 * 7
+    }
+  )
 
-  res.status(200).json({ message: 'User logged in.', token, user })
+  res.status(200).json({ message: 'User logged in.', token })
 }
 
 const updateProfile = async (req, res) => {
