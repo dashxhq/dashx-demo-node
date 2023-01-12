@@ -42,9 +42,9 @@ const login = async (req, res) => {
   const user = req.user
   delete user.encrypted_password
 
-  const token = generateIdentityToken('USER', user.id, user)
+  const token = generateIdentityToken(user.id)
 
-  res.status(200).json({ message: 'User logged in.', token })
+  res.status(200).json({ message: 'User logged in.', token, user })
 }
 
 const updateProfile = async (req, res) => {
