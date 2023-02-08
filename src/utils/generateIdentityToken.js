@@ -8,7 +8,7 @@ const generateIdentityToken = (uid) => {
 
   const payload = {
     kind: 'USER',
-    uid,
+    uid: uid.toString(),
     exp: Math.floor(expiresAt.getTime() / 1000)
   }
 
