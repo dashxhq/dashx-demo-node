@@ -18,7 +18,7 @@
 
 <br />
 
-# dashx-demo-react
+# dashx-demo-node
 
 This repository contains a sample application that demonstrates various features of the [DashX Node.js SDK](https://github.com/dashxhq/dashx-node).
 
