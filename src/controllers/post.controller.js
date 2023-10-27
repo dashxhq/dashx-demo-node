@@ -10,7 +10,7 @@ const createPost = async (req, res) => {
     const {
       rows: [post]
     } = await executeQuery(
-      'INSERT INTO posts (user_id, text, image, audio, video) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO posts (user_id, text, image, audio, video) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [req.user.id, req.body.text, req.body.image, req.body.audio, req.body.video]
     )
 
