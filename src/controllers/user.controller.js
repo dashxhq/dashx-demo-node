@@ -99,7 +99,7 @@ const unauthorizedLogin = (req, res) => {
 
 const forgotPassword = async (req, res) => {
   if (!req.body.email.trim()) {
-    return res.status(400).json({ message: 'Email is required.' })
+    return res.status(422).json({ message: 'Email is required.' })
   }
 
   try {
@@ -175,11 +175,11 @@ const contact = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   if (!req.body.token) {
-    return res.status(400).json({ message: 'Token is required.' })
+    return res.status(422).json({ message: 'Token is required.' })
   }
 
   if (!req.body.password) {
-    return res.status(400).json({ message: 'Password is required.' })
+    return res.status(422).json({ message: 'Password is required.' })
   }
 
   try {
