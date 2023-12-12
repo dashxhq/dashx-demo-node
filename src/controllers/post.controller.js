@@ -21,7 +21,7 @@ const createPost = async (req, res) => {
       return res.status(422).json({ message: `Missing field ${error.column}.` })
     }
 
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -56,7 +56,7 @@ const getPosts = async (req, res) => {
     return res.status(200).json({ posts: rows })
   } catch (error) {
     console.log(error)
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -87,7 +87,7 @@ const toggleBookmark = async (req, res) => {
       return res.status(404).json({ message: `Post not found.` })
     }
     console.log(error)
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -124,7 +124,7 @@ const getBookmarkedPosts = async (req, res) => {
       .status(200)
       .json({ message: 'Successfully fetched.', posts: rows })
   } catch (error) {
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 

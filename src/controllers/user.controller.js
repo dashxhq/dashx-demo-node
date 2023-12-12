@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
     if (error.constraint === 'users_email_key') {
       return res.status(409).json({ message: 'User already exists.' })
     }
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -89,7 +89,7 @@ const updateProfile = async (req, res) => {
 
     return res.status(200).json({ message: 'Profile updated.', user })
   } catch (error) {
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -127,8 +127,7 @@ const forgotPassword = async (req, res) => {
       message: 'Check your inbox for a link to reset your password.'
     })
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -168,8 +167,7 @@ const contact = async (req, res) => {
       message: 'Thanks for reaching out! We will get back to you soon.'
     })
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -203,7 +201,7 @@ const resetPassword = async (req, res) => {
         .status(422)
         .json({ message: 'Your reset password link has expired.' })
     }
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
@@ -223,7 +221,7 @@ const getProfile = async (req, res) => {
 
     return res.status(200).json({ message: 'Successfully fetched.', user })
   } catch (error) {
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ error })
   }
 }
 
