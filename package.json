@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/dashxhq/dashx-demo-node#readme",
   "dependencies": {
-    "@dashx/node": "^0.1.38",
+    "@dashx/node": "^0.1.39",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
