@@ -17,7 +17,7 @@ const getProducts = async (req, res) => {
         .status(200)
         .json({ message: 'Successfully fetched.', products })
     })
-    .catch((error) => res.status(500).json({ message: error }))
+    .catch((error) => res.status(500).json({ error }))
 }
 
 const getProduct = async (req, res) => {
@@ -29,7 +29,7 @@ const getProduct = async (req, res) => {
     .then((product) => {
       return res.status(200).json({ message: 'Successfully fetched.', product })
     })
-    .catch((error) => res.status(500).json({ message: error }))
+    .catch((error) => res.status(500).json({ error }))
 }
 
 module.exports = { getProducts, getProduct }
