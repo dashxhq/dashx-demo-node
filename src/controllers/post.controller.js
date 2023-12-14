@@ -25,6 +25,31 @@ const createPost = async (req, res) => {
   }
 }
 
+const updatePostAssetsUrl = (row, assets) => {
+  const image = assets.find((a) => a.id === row.image)
+  const audio = assets.find((a) => a.id === row.audio)
+  const video = assets.find((a) => a.id === row.video)
+  const avatar = assets.find((a) => a.id === row.user.avatar)
+
+  if (image) {
+    row.imageUrl = image.url
+  }
+
+  if (audio) {
+    row.audioUrl = audio.url
+  }
+
+  if (video) {
+    row.videoUrl = video.url
+  }
+
+  if (avatar) {
+    row.user.avatarUrl = avatar.url
+  }
+
+  return row
+}
+
 const getPosts = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized.' })
@@ -53,7 +78,24 @@ const getPosts = async (req, res) => {
       delete post.avatar
     })
 
-    return res.status(200).json({ posts: rows })
+    const filter = {
+      id: {
+        in: rows.map((row) => {
+          return [
+            row.image,
+            row.audio,
+            row.video,
+            row.user.avatar
+          ]
+        }).flat().filter((id) => id !== null)
+      }
+    }
+
+    const assets = await dx.listAssets({
+      filter
+    })
+
+    return res.status(200).json({ posts: rows.map((row) => updatePostAssetsUrl(row, assets)) })
   } catch (error) {
     console.log(error)
     return res.status(500).json({ error })
@@ -120,9 +162,26 @@ const getBookmarkedPosts = async (req, res) => {
       delete post.avatar
     })
 
+    const filter = {
+      id: {
+        in: rows.map((row) => {
+          return [
+            row.image,
+            row.audio,
+            row.video,
+            row.user.avatar
+          ]
+        }).flat().filter((id) => id !== null)
+      }
+    }
+
+    const assets = await dx.listAssets({
+      filter
+    })
+
     return res
       .status(200)
-      .json({ message: 'Successfully fetched.', posts: rows })
+      .json({ message: 'Successfully fetched.', posts: rows.map((row) => updatePostAssetsUrl(row, assets)) })
   } catch (error) {
     return res.status(500).json({ error })
   }

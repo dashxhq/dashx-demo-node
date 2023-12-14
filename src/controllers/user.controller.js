@@ -6,6 +6,12 @@ const executeQuery = require('../services/db.service')
 
 const generateIdentityToken = require('../utils/generateIdentityToken')
 
+const getAvatarUrl = async (id) => {
+  const avatar = await dx.getAsset(id)
+
+  return avatar?.url ?? null
+}
+
 const registerUser = async (req, res) => {
   const { first_name, last_name, email, password } = req.body
   if (!first_name || !last_name || !email || !password) {
@@ -86,6 +92,10 @@ const updateProfile = async (req, res) => {
       lastName: user.last_name,
       email: user.email
     })
+
+    if (user.avatar) {
+      user.avatarUrl = await getAvatarUrl(user.avatar)
+    }
 
     return res.status(200).json({ message: 'Profile updated.', user })
   } catch (error) {
@@ -218,6 +228,10 @@ const getProfile = async (req, res) => {
        WHERE id = $1`,
       [req.user.id]
     )
+
+    if (user.avatar) {
+      user.avatarUrl = await getAvatarUrl(user.avatar)
+    }
 
     return res.status(200).json({ message: 'Successfully fetched.', user })
   } catch (error) {
