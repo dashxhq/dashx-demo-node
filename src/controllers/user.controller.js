@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
 
     return res.status(201).json({ message: 'User created.' })
   } catch (error) {
-    if (error.constraint === 'users_email_key') {
+    if (error?.constraint === 'users_email_key') {
       return res.status(409).json({ message: 'User already exists.' })
     }
     return res.status(500).json({ error })
@@ -41,6 +41,15 @@ const registerUser = async (req, res) => {
 const login = async (req, res) => {
   const user = req.user
   delete user.encrypted_password
+
+  const userData = {
+    firstName: user.first_name,
+    lastName: user.last_name,
+    email: user.email
+  }
+
+  await dx.identify(user.id, userData)
+  await dx.track('User Logged In', user.id, userData)
 
   const token = jwt.sign({ user }, process.env.JWT_SECRET, {
     expiresIn: 86400 * 7
