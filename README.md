@@ -12,7 +12,7 @@
     <span> | </span>
     <a href="https://dashxdemo.com">Demos</a>
     <span> | </span>
-    <a href="https://docs.dashx.com/developer">Documentation</a>
+    <a href="https://docs.dashx.com">Documentation</a>
   </h4>
 </div>
 
@@ -22,7 +22,7 @@
 
 This repository contains a sample application that demonstrates various features of the [DashX Node.js SDK](https://github.com/dashxhq/dashx-node).
 
-Check out the [Developer Guide](https://docs.dashx.com/developer) to understand each feature in-depth.
+Check out the [Developer Guide](https://docs.dashx.com) to understand each feature in-depth.
 
 <br />
 
